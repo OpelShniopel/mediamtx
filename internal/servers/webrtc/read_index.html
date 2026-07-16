@@ -11,6 +11,9 @@
         height: 100%;
         font-family: "Arial", sans-serif;
       }
+      html {
+        background: rgb(30, 30, 30);
+      }
       #video {
         position: absolute;
         top: 0;
@@ -18,6 +21,12 @@
         width: 100%;
         height: 100%;
         background: rgb(30, 30, 30);
+        /* hidden until frames arrive, so the WebView's grey
+           play-button placeholder is never painted */
+        visibility: hidden;
+      }
+      #video.started {
+        visibility: visible;
       }
       #message {
         position: absolute;
@@ -84,6 +93,14 @@
         );
         defaultControls = video.controls;
       };
+
+      video.addEventListener(
+        "playing",
+        () => {
+          video.classList.add("started");
+        },
+        { once: true },
+      );
 
       window.addEventListener("load", () => {
         loadAttributesFromQuery();
