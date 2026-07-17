@@ -94,13 +94,9 @@
         defaultControls = video.controls;
       };
 
-      video.addEventListener(
-        "playing",
-        () => {
-          video.classList.add("started");
-        },
-        { once: true },
-      );
+      video.addEventListener("playing", () => {
+        video.classList.add("started");
+      });
 
       window.addEventListener("load", () => {
         loadAttributesFromQuery();
@@ -108,6 +104,11 @@
         reader = new MediaMTXWebRTCReader({
           url: new URL("whep", window.location.href) + window.location.search,
           onError: (err) => {
+            // The stream died (e.g. pipeline restart) and the reader is
+            // reconnecting — hide the video again or the WebView paints
+            // its grey play-button placeholder over the stale element.
+            // The 'playing' listener re-shows it when frames return.
+            video.classList.remove("started");
             setMessage(err);
           },
           onTrack: (evt) => {
